@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="description"
+        content="TextToon: Real-Time Text Toonify Head Avatar from Single Video">
+  <meta name="keywords" content="Gaussian-Splatting, 3D Head Avatar, Stylization">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title></title>
+
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-PYVRSFMDRL"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+
+    function gtag() {
+      dataLayer.push(arguments);
+    }
+
+    gtag('js', new Date());
+
+    gtag('config', 'G-PYVRSFMDRL');
+  </script>
+
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
+        rel="stylesheet">
+
+  <link rel="stylesheet" href="./static/css/bulma.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-slider.min.css">
+  <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
+  <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="./static/css/index.css">
+  <link rel="icon" href="./static/images/favicon.svg">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script defer src="./static/js/fontawesome.all.min.js"></script>
+  <script src="./static/js/bulma-carousel.min.js"></script>
+  <script src="./static/js/bulma-slider.min.js"></script>
+  <script src="./static/js/index.js"></script>
+</head>
+<body>
+
+
+<nav class="navbar" role="navigation" aria-label="main navigation">
+  <div class="navbar-brand">
+    <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+    </a>
+  </div>
+  <div class="navbar-menu">
+    <div class="navbar-start" style="flex-grow: 1; justify-content: center;">
+    </div>
+  </div>
+</nav>
+
+
+<section class="hero">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column has-text-centered">
+          <h1 class="title is-1 publication-title">TextToon: Real-Time Text Toonify Head Avatar from Single Video</h1>
+          <h1 class="title is-4 publication-title">Siggraph Asia 2024</h1>
+
+          <div class="is-size-5 publication-authors">
+            <span class="author-block">
+              <a href="https://songluchuan.github.io/">Luchuan Song</a><sup>1</sup>,</span>
+            <span class="author-block">
+              <a href="https://lelechen63.github.io/">Lele Chen</a><sup>2</sup>,
+            </span>
+            <span class="author-block">
+              <a href="">Celong Liu</a><sup>3</sup>,</span>
+            <span class="author-block">
+            <span class="author-block">
+              <a href="">Pinxin Liu</a><sup>1</sup>,</span>
+            <span class="author-block">
+              <a href="https://www.cs.rochester.edu/~cxu22/">Chenliang Xu</a><sup>1</sup>,
+            </span>
+          </div>
+
+          <div class="is-size-5 publication-authors">
+            <span class="author-block"><sup>1</sup>University of Rochester,</span>
+            <span class="author-block"><sup>2</sup>Sony AI,</span>
+            <span class="author-block"><sup>3</sup>Bytedance</span>
+          </div>
+
+          <div class="column has-text-centered">
+            <div class="publication-links">
+              <span class="link-block">
+                <a href="https://arxiv.org/abs/Anonymous"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="ai ai-arxiv"></i>
+                  </span>
+                  <span>arXiv</span>
+                </a>
+              </span>
+              <!-- Code Link. -->
+              <span class="link-block">
+                <a href="https://github.com/---------(Anonymous)"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fab fa-github"></i>
+                  </span>
+                  <span>Code</span>
+                  </a>
+              </span>
+
+
+              <!-- Appendix Link. -->
+<!--               <span class="link-block">
+                <a href="./Appendix_629.pdf"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fas fa-file-pdf"></i>
+                  </span>
+                  <span>Appx.</span>
+                  </a>
+              </span> -->
+
+              <!-- Dataset Link. -->
+              <span class="link-block">
+                <a href="https://github.com/---------(Anonymous)"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="far fa-images"></i>
+                  </span>
+                  <span>Data</span>
+                  </a>
+            </div>
+
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="hero teaser">
+  <div class="container is-max-desktop">
+    <div class="content has-text-justified">
+        <img src="./static/images/TextToon_teaser.jpg"/>
+      <p>
+        Figure. 1. Our method takes a short monocular video as input (top) and animates the toonified appearance with synchronized expressions and movements using human-friendly text descriptions, e.g., "Turn him into an American Comic style" (middle). Moreover, our system achieves real-time animation (bottom), operating at 25 FPS (generation inference is about 48 FPS) on an NVIDIA RTX 4090 machine and 15 FPS on an Apple MacBook (M1 chip). All toonified faces (middle and bottom) are generated from the same pre-trained appearance model. The single-view video data are collected from Youtube (top block &copy <a href="https://www.youtube.com/watch?v=yoGQynxSbos&t=2670s">Tee Noir</a> , middle and bottom block &copy <a href="https://www.youtube.com/watch?v=pVvug_qleTs&t=359s">Trevor Noah</a>).
+      </p>
+    </div>
+  </div>
+</section>
+<br>
+<br>
+
+<section class="hero is-light is-small">
+  <div class="hero-body">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">What is the embodiment of "Siggraph" in AI ?</h2>
+        <p style="font-size: 1.2em;"> Let us use the prompt: "Turn him/her into Siggraph style" to have a look!</p>
+        <p style="font-size: 1.1em;"> ↓ The appearance have a sense of technology with smooth skin and blue eyes ↓</p>
+    <div class="container">
+      <div id="results-carousel" class="carousel results-carousel">
+        <div class="item item-hulk">
+          <p style="color: black; font-size: 16px;"><i>"Turn her into Siggraph style !"</i></p>
+          <video id="matting-video" controls playsinline height="100%">
+            <source src="./static/Videos/video_sg_1.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+        <div class="item item-1">
+          <p style="color: black; font-size: 16px;"><i>"Turn him into Siggraph style !"</i></p>
+          <video id="matting-video" controls playsinline height="100%">
+            <source src="./static/Videos/video_sg_2.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+        <div class="item item-2">
+          <p style="color: black; font-size: 16px;"><i>"Turn him into Siggraph style !"</i></p>
+          <video id="matting-video" controls playsinline height="100%">
+            <source src="./static/Videos/video_sg_3.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+        <div class="item item-3">
+          <p style="color: black; font-size: 16px;"><i>Source Drive Actor</i></p>
+          <video id="matting-video" controls playsinline height="100%">
+            <source src="./static/Videos/video_sg_gt.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<section class="hero is-light is-small">
+  <div class="hero-body">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Gallery</h2>
+    <div class="container">
+      <div id="results-carousel" class="carousel results-carousel">
+
+        <div class="item item-10">
+          <p style="color: black; font-size: 16px;"><i>"Turn him into Dr. Manhattan."</i></p>
+          <video id="matting-video" controls playsinline height="100%">
+            <source src="./static/Teaser-videos/video_t_10.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+
+
+        <div class="item item-12">
+          <p style="color: black; font-size: 16px;"><i>"Turn him into Dragon Ball comic style."</i></p>
+          <video id="matting-video" controls playsinline height="100%">
+            <source src="./static/Teaser-videos/video_t_6.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+
+
+        <div class="item item-12">
+          <p style="color: black; font-size: 16px;"><i>"Turn him into the Hulk."</i></p>
+          <video id="matting-video" controls playsinline height="100%">
+            <source src="./static/Teaser-videos/video_t_5.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+
+        <div class="item item-12">
+          <p style="color: black; font-size: 16px;"><i>"Turn him into the Joker."</i></p>
+          <video id="matting-video" controls playsinline height="100%">
+            <source src="./static/Teaser-videos/video_t_4.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+
+        <div class="item item-12">
+          <p style="color: black; font-size: 16px;"><i>"Turn him into Pixar style."</i></p>
+          <video id="matting-video" controls playsinline height="100%">
+            <source src="./static/Teaser-videos/video_t_3.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+
+        <div class="item item-12">
+          <p style="color: black; font-size: 16px;"><i>"Turn him into cartoon style."</i></p>
+          <video id="matting-video" controls playsinline height="100%">
+            <source src="./static/Teaser-videos/video_t_2.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+
+
+        <div class="item item-11">
+          <p style="color: black; font-size: 16px;"><i>"Turn him into Shrek."</i></p>
+          <video id="matting-video" controls playsinline height="100%">
+            <source src="./static/Teaser-videos/video_t_9.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+
+        <div class="item item-12">
+          <p style="color: black; font-size: 16px;"><i>"Turn him into Pixar style."</i></p>
+          <video id="matting-video" controls playsinline height="100%">
+            <source src="./static/Teaser-videos/video_t_7.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+
+        <div class="item item-5">
+          <p style="color: black; font-size: 16px;"><i>"Turn him into pixar style, as in Toy Story."</i></p>
+          <video id="matting-video" controls playsinline height="100%">
+            <source src="./static/Teaser-videos/out-pixar.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+        <div class="item item-6">
+          <p style="color: black; font-size: 16px;"><i>"The white walker, as in Game of Thrones."</i></p>
+          <video id="matting-video" controls playsinline height="100%">
+            <source src="./static/Teaser-videos/out-ww.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+
+
+        <div class="item item-8">
+          <p style="color: black; font-size: 16px;"><i>"Turn him as Hulk in Marvel."</i></p>
+          <video id="matting-video" controls playsinline height="100%">
+            <source src="./static/Teaser-videos/video_t_1.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+
+
+        <div class="item item-7">
+          <p style="color: black; font-size: 16px;"><i>"Turn him looks like Kobe Bryant."</i></p>
+          <video id="matting-video" controls playsinline height="100%">
+            <source src="./static/Teaser-videos/out-kb.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+
+        <div class="item item-7">
+          <p style="color: black; font-size: 16px;"><i>"Turn her into Elsa, in Frozen (Disney movie)."</i></p>
+          <video id="matting-video" controls playsinline height="100%">
+            <source src="./static/Teaser-videos/out-elsa.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+
+        <div class="item item-2">
+          <p style="color: black; font-size: 16px;"><i>"Turn him into the Dragon Ball comic style."</i></p>
+          <video id="matting-video" controls playsinline height="100%">
+            <source src="./static/Teaser-videos/out-dragonball.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+        <div class="item item-3">
+          <p style="color: black; font-size: 16px;"><i>"Turn her into cartoon style."</i></p>
+          <video id="matting-video" controls playsinline height="100%">
+            <source src="./static/Teaser-videos/out-cartoon.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+        <div class="item item-4">
+          <p style="color: black; font-size: 16px;"><i>"Turn her into Van Gogh."</i></p>
+          <video id="matting-video" controls playsinline height="100%">
+            <source src="./static/Teaser-videos/out-vg.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+        <div class="item item-4">
+          <p style="color: black; font-size: 16px;"><i>"Turn her looks like panda."</i></p>
+          <video id="matting-video" controls playsinline height="100%">
+            <source src="./static/Teaser-videos/out-panda.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+
+        <div class="item item-hulk">
+          <p style="color: black; font-size: 16px;"><i>"The Hulk, as in Marvel Universe."</i></p>
+          <video id="matting-video" controls playsinline height="100%">
+            <source src="./static/Teaser-videos/out-hulk.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+        <div class="item item-1">
+          <p style="color: black; font-size: 16px;"><i>"The Joker, as in DC film."</i></p>
+          <video id="matting-video" controls playsinline height="100%">
+            <source src="./static/Teaser-videos/out-joker.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+
+        <div class="item item-7">
+          <p style="color: black; font-size: 16px;"><i>"Turn her look like a cute baby."</i></p>
+          <video id="matting-video" controls playsinline height="100%">
+            <source src="./static/Teaser-videos/out-kids.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+
+
+
+
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<section class="section">
+  <div class="container is-max-desktop">
+    <!-- Abstract. -->
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Abstract</h2>
+        <div class="content has-text-justified">
+          <p>
+            We propose TextToon, a method to generate a drivable toonified avatar. Given a short monocular video sequence and a written instruction about the avatar style, our model can generate a high-fidelity toonified avatar that can be driven in real-time by another video with arbitrary identities. Existing related works heavily rely on multi-view modeling to recover geometry via texture embeddings, presented in a static manner, leading to control limitations. The multi-view video input also makes it difficult to deploy these models in real-world applications. To address these issues, we adopt a conditional embedding Tri-plane to learn realistic and stylized facial representations in a Gaussian deformation field. Additionally, we expand the stylization capabilities of 3D Gaussian Splatting by introducing an adaptive pixel-translation neural network and leveraging patch-aware contrastive learning to achieve high-quality images. To push our work into consumer applications, we develop a real-time system that can operate at 48 FPS on a GPU machine and 15-18 FPS on a mobile machine. Extensive experiments demonstrate the efficacy of our approach in generating textual avatars over existing methods in terms of quality and real-time animation.
+          </p>
+        </div>
+      </div>
+    </div>
+    <!--/ Abstract. -->
+  </div>
+</section>
+
+  
+<section class="hero teaser">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3" style="text-align: center;">Method</h2>
+    <div class="content has-text-justified">
+        <img src="./static/images/629_pipeline.png"/>
+      <p>Figure. 2. The overview of our methods. It takes a single video as input and tracked on each frames, then initialize the canonical Gaussian point clouds through the tracked geometry of the first frame. We leverage the rigid transformation matrix (<b>R</b>, <b>T<sub>x,y,z</sub></b>) and a learnable lazy factor <b>w</b> to transfer points from the canonical space to the observation space. The proposed conditional Tri-plane Gaussian Deformation Field <b>D<sub>c</sub></b> takes the normalized render map <b>m<sub>t</sub></b>, expression <b>&beta;<sub>t</sub></b> and vertex position <b>S<sub>t</sub></b> to predict the Gaussian properties deformation on each points. The pre-training and fine-tuning share the same structure, but the targets are realism appearance and T2I synthesized appearance respectively. The details of conditional Tri-plane Gaussian Deformation Field and Text2Image editing are shown in III) and IV) respectively.</p>
+    </div>
+  </div>
+</section>
+<br>
+<br>
+
+<section style="background-color: #fff;">
+  <h2 class="title is-3" style="text-align: center;">Demo Video</h2>
+  <p style="text-align: center;">[<font color="red">No voice and audio in the Demo Video</font>]</p>
+  <div style="width:100%; text-align: center;">
+    <div style="width:960px; text-align: center; margin:auto;">
+      <p style="width:100%; max-width:960px; word-wrap: break-word; text-align: center;">
+      </p>
+      <div style="width:100%">
+        <video id="matting-video" controls playsinline height="100%">
+          <source src="./629-demo-video.mp4" type="video/mp4">
+        </video>
+      </div>
+    </div>
+  </div>
+</section>
+
+<br> 
+<br> 
+<br> 
+<br> 
+<br> 
+<br> 
+<section style="background-color: #fff;">
+  <h2 class="title is-3" style="text-align: center;">Real-Time Demo</h2>
+  <p style="text-align: center;">We present a real-time demo on Apple Macbook Pro (M1 Chip)</p>
+  <div style="width:100%; text-align: center;">
+    <div style="width:960px; text-align: center; margin:auto;">
+      <p style="width:100%; max-width:960px; word-wrap: break-word; text-align: center;">
+      </p>
+      <div style="width:100%">
+        <video id="matting-video" controls playsinline height="100%">
+          <source src="./static/Videos/real-time-demo.mp4" type="video/mp4">
+        </video>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+<section class="section">
+  <div class="container is-max-desktop">
+    <!-- Our + X. -->
+    <div class="columns is-centered">
+      <div class="column is-full-width">
+        <h2 class="title is-3"> Multi-View Results [from monocular input]</h2>
+        <div class="content has-text-justified">
+          <p>
+            We present multi-view results learned from monocular inputs in various styles and facial expressions, demonstrating our method's capacity to recover multiple views from single-view input. The input of second line comes from <a href="https://github.com/zhengyuf/PointAvatar/tree/master?tab=readme-ov-file#preparing-dataset">Yufeng's demo video</a>. 
+          </p>
+        </div>
+        <div class="columns is-centered">
+          <div class="column content">
+            <video id="matting-video" controls playsinline height="100%">
+              <source src="./static/Videos/mv-1.mp4"
+                      type="video/mp4">
+            </video>
+
+            <video id="matting-video" controls playsinline height="100%">
+              <source src="./static/Videos/mv-2.mp4"
+                      type="video/mp4">
+            </video>
+          </div>
+        </div>
+
+        <br/>
+
+        <!-- Animate. -->
+        <h2 class="title is-3">Animation</h3>
+        <div class="content has-text-justified">
+          <p>
+            We can re-animate the artistic avatar by different prompts under cross-identity reenactment (the last row is the cross-identity on pre-trained appearance). 
+          </p>
+        </div>
+        <div class="content has-text-centered">
+          <video id="replay-video"
+                 controls
+                 muted
+                 preload
+                 playsinline
+                 width="100%">
+            <source src="./static/Videos/video-2.mp4"
+                    type="video/mp4">
+          </video>
+          <video id="replay-video"
+                 controls
+                 muted
+                 preload
+                 playsinline
+                 width="100%">
+            <source src="./static/Videos/video-3.mp4"
+                    type="video/mp4">
+          </video>
+
+          <video id="replay-video"
+                 controls
+                 muted
+                 preload
+                 playsinline
+                 width="100%">
+            <source src="./static/Videos/video-5.mp4"
+                    type="video/mp4">
+          </video>
+
+        </div>
+        
+
+        <br>
+        <br>
+        <h2 class="title is-3">Reading Materials</h3>
+        <div class="content has-text-justified">
+          <p>
+            We have listed some questions that you may concern when reading this paper. 
+          </p>
+          <p>
+            <b>1.</b>: Why not include the Next3D, Deformtoon3D in the baselines?
+            <br> 
+            <b>A.1</b>: The DeformToon3D and Next3D requires extra facial alignment and depend on StyleGAN inversion for specific identities. And DeformToon3D is built based on StyleSDF. The StyleSDF does not seem to have an inversion method so far, please refer to this <a href="https://github.com/royorel/StyleSDF/issues/14">issue</a> for more details. In addition, we provide some comparison results with Next3D by <a href="https://github.com/danielroich/PTI">PTI inversion</a> in the video, but for the sake of rigor, they are not included in the main paper. Please refer to Video.Q.1 for more details (another sample is provided in demo video 05:04-05:26). 
+
+            <div style="text-align: center;">
+                <video id="matting-video" controls playsinline style="width: 100%; height: auto;">
+                    <source src="./static/Videos/QA-video-1.mp4" type="video/mp4">
+                </video>
+                <p style="margin-top: 2px; text-align: justify; max-width: 100%; margin: auto;">Video.A.1. In comparison with Next3D, PTI (StyleGAN inversion) results in facial identity drift. Furthermore, the two styles associated with Next3D (Pixar and Cartoon) are not distinct.</p>
+            </div>
+
+
+            <br>
+            <br> 
+            <br> 
+            <b>2</b>: Misalignment of gaze control or other complex expressions? 
+            <br>
+            <b>A.2</b>: We do not include complex facial movements for two reasons: (1) The face edited by Text2Image does not include gaze control and complex expressions. In fact, such movements are rarely found in real-world animations, such as Detective Conan. (2) To ensure pipeline inference efficiency, particularly 3DMM tracking efficiency, the 3DMM algorithm we use does not include eye tracking, as Figure. 4 in below. Additionally, please incorporate baseline methods into comparisons when evaluation.
+
+            <div class="hero-body" style="text-align: center; margin-top: 0; padding-top: 0;">
+            <img src="./static/images/web_image_1.png" align="center" height="700" width="700" style="margin-top: 0;" />
+
+            <p>Figure. 3. Visualization of the 3DMM model we used, which does not contain eyeballs annotations.</p>
+            </div>
+
+            <br>
+            <br>
+            <b>3</b>: What is the structure of generator and encoder?
+            <br>
+            <b>A.3</b>: The generator and encoder are composed of some convolution and MLP layers. The overall weight of the model is about 49Mb with each components. The detail of Tri-plane generator, image2image translation module (I2I) and conditional input encoder are shown in Figure 5.
+            <div class="hero-body" style="text-align: center; margin-top: 0; padding-top: 0;">
+            <img src="./static/images/structure.jpg" align="center" height="800" width="800" style="margin-top: 0;" />
+            <p style="margin-top: 5px; text-align: justify;">Figure. 4. The detail of each components. The conditional facial embedding is a concatenation of encoded orthogonal rendering and the corresponding 3DMM expression coefficients. The size of out rendered map for I2I input is 32 &times 512 &times 512 and the output size is 3 &times 512 &times 512. The size of input normalized render is 3 &times 128 &times 128, and the output of the conditional encoder (embedding) is 1 &times 256.</p>
+            </div>
+
+          </p>
+        </div>
+
+        <h2 class="title is-3">Experiment Datasets</h3>
+        <div class="content has-text-justified">
+          <p>
+            You can find the datasets in our work from these methods, 
+            <br> 
+            1.<a href="https://drive.google.com/file/d/1DlH2rReDMuq1kGbDSxjBul9EJ6YLfQRh/view">Lizhen's demo video</a> from StyleAvatar.
+            <br> 
+            2.<a href="https://github.com/zhengyuf/PointAvatar/tree/master?tab=readme-ov-file#preparing-dataset">Yufeng's demo video</a> from PointAvatar.
+            <br> 
+            3.<a href="https://keeper.mpdl.mpg.de/d/5ea4d2c300e9444a8b0b/">The multiple subjects demo video</a> from Instant Volumetric Head Avatars (INSTA).
+            <br> 
+            4.<a href="https://drive.google.com/drive/folders/1OiUvo7vHekVpy67Nuxnh3EuJQo7hlSq1">ID1/ID2's demo video</a> from NeRFBlendshape.
+            <br> 
+            5.Two of  <a href="">our self-record monocular videos</a>. 
+            <br> 
+            <br> 
+            We gratefully acknowledge the research data provided by these methods.
+          </p>
+        </div>
+
+      </div>
+    </div>
+</section>
+
+
+
+<section class="section" id="BibTeX">
+  <div class="container is-max-desktop content">
+    <h2 class="title">BibTeX</h2>
+    <pre><code></code>@misc{
+      Anonymous Siggraph Asia 2024 Submission,
+      #629
+}</code></pre>
+  </div>
+</section>
+
+<footer class="footer" style="padding-top: 6px; padding-bottom: 6px;">
+  <div class="container">
+    <div class="content has-text-centered">
+    </div>
+    <div class="columns is-centered">
+      <div class="column is-8">
+        <div class="content">
+          <p>
+            Our website template comes from <a
+              href="https://github.com/nerfies/nerfies.github.io">Nerfies</a> and is modified based on it. Thanks to the authors for providing beautiful icons.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+
+
+</body>
+</html>
